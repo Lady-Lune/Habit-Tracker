@@ -7,43 +7,54 @@ import pandas as pd
 #=======================================================================================================================#
 
 def viewhabitmenu():
+
+# Import HabitStats.csv file as a DataFrame and get the list of habits in it
     habitstats_file = pd.read_csv("HabitStats.csv", index_col="HabitName")
     habit_list = habitstats_file.index.to_list()
-    
+
+# Display
+    print('')
     print('*'*66)
     print(f"|{'View Habit':^64}|")
     print('|'+'-'*64+'|')
-    for i,habit in enumerate(habit_list):
+    for i,habit in enumerate(habit_list, start=1):
         print(f"|{' '*16}{i:>14}  {habit:<16}{' '*16}|")
     print(f"|{" e: exit":<64}|")
     print('*'*66)
-    
+    print('')
+
+
+# Handle input
     while True:
         try:
             viewhabit_ind = input("Enter number to select corresponding habit: ")
+
+            # Exit Viewhabit Menu
             if viewhabit_ind == 'e':
-                #mainmenu()
-                #break
-                return #test
+                return
+            
+            # When input is not e
             else:
                 viewhabit_ind = int(viewhabit_ind)
-                if not ((viewhabit_ind >= 0) and (viewhabit_ind < len(habit_list))):
-                    raise IndexError(viewhabit_ind, "not a valid input")
+
+                # Check if number is in range
+                if not ((viewhabit_ind >= 1) and (viewhabit_ind <= len(habit_list))):
+                    raise IndexError(f"{viewhabit_ind} is not a valid number")
                 else:
                     habitview(viewhabit_ind)
                     break
         except Exception as e:
-            if str(e) == f"invalid literal for int() with base 10: '{viewhabit_ind}'":
-                print("Enter a number or e")
+            if isinstance(e,ValueError):
+                print("Please enter a valid number or 'e'")
             else:
-                print(e)
+                print(f"Please enter a valid input. (Error: {e})")
 
 #-----------------------------------------------------------------------------------------------------------------------#
 
 def habitview(viewhabit_ind):
     habitstats_file = pd.read_csv("HabitStats.csv", index_col="HabitName")
     habit_list = habitstats_file.index.to_list()
-    viewhabit = habit_list[viewhabit_ind] 
+    viewhabit = habit_list[viewhabit_ind-1] 
     print('')
     print(f"{' '*16}{'*'*34}{' '*16}") 
     print(f"{' '*16}|{viewhabit:^32}|{' '*16}")
@@ -75,4 +86,4 @@ def habitview(viewhabit_ind):
                 viewhabit_ind = 0
                 habitview(viewhabit_ind)
             else:
-                print(e)
+                print(f"Please enter a valid input [e , p , n]. (Error: {e})")

@@ -4,10 +4,6 @@ import csv
 import pandas as pd
 import re
 
-#Importing Menus
-#from main import cache
-#from main_menu import mainmenu
-
 #=======================================================================================================================#
 #   3   Create New Habit
 #=======================================================================================================================#
@@ -18,6 +14,7 @@ def createhabitmenu(cache):
     habit_list = habit_file["HabitName"].to_list()
 
     #Display
+    print('')
     print('*'*66)
     print(f"|{"Create a New Habit":^64}|")
     print(f"|{'*'*64}|")
@@ -43,12 +40,14 @@ def createhabitmenu(cache):
             habit_time = input(f"{"AT (in 24hr format)" :<16}  ")
             habit_time = time_conv(habit_time)
             break
-        except ValueError as e:
-            if str(e) == "invalid literal for int() with base 10: ''":
-                print("Input time in 24hr format ex: 15.30")
-            else: print(e)
+        except Exception as e:
+            if isinstance(e,TypeError):
+                print("Input time in 24hr format ex: 15:30")
+            if isinstance(e,ValueError):
+                print("Make sure to input time in 24hr format like 09.30 or 18.30")
+            else: print(f"Error: {e}")
     
-    #Get habit stack
+    #Get habit order: After
     after = input (f"{"AFTER I":<16}  ").lower()
 
     #Get habit name
@@ -62,9 +61,9 @@ def createhabitmenu(cache):
                 raise Exception("Please enter the habit")
             break
         except Exception as e:
-            print(e)
+            print(f"Error: {e}")
     
-    #Get habit stack
+    #Get habit order: Before
     before = input(f"{"BEFORE I":<16}  ").lower()
     print('')
     print('*'*66)
@@ -110,31 +109,28 @@ def time_conv(habit_time):
 def createnewhabit(habit_info, habit_name,cache):
     print('-'*66)
     print('')
-    print(f"AT < {habit_info[habit_name]["Time"] }> AFTER I < {habit_info[habit_name]["After"]} > I WILL < {habit_name} > BEFORE I < {habit_info[habit_name]["Before"]} >")
+    print(f"AT [ {habit_info[habit_name]["Time"] } ] AFTER I [ {habit_info[habit_name]["After"]} ] I WILL [ {habit_name} ] BEFORE I [ {habit_info[habit_name]["Before"]} ]")
     print('')
     print(f"{" e: exit without saving":<33}{"c: create new habit ":>33}")
     print('-'*66)
+    print('')
     
     while True:
         try:
             createhabit_cmd = input("Enter Command: ")
             if createhabit_cmd == 'e':
-                #mainmenu()
-                #break
-                return #test
+                return
             elif createhabit_cmd == 'c':
                 addhabit_to_habitfile(habit_name,cache)
                 addhabit_to_statfile(habit_name,cache)
                 addhabit_to_logfile(habit_name)
                 print(f"Habit Created < {habit_name} > ")
                 cache.pop(habit_name)
-                #mainmenu()
-                #break
-                return #test
+                return
             else:
-                raise ValueError("Invalid input",createhabit_cmd)
+                raise ValueError(f"{createhabit_cmd} is not a valid command")
         except Exception as e:
-            print(e)
+            print(f"Error: {e}")
 
 #-----------------------------------------------------------------------------------------------------------------------#
 
@@ -148,11 +144,11 @@ def addhabit_to_habitfile(habit_name,cache):
         if str(e) == habit_name:
             print(f"Something went wrong habit -{habit_name}- hasn't been created")
         else:
-            print(e)
+            print(f"Habit not added to Habit.csv. Error: {e}")
 
 #-----------------------------------------------------------------------------------------------------------------------#
 
-def addhabit_to_statfile(habit_name,cache): #add cache to the args
+def addhabit_to_statfile(habit_name,cache):
     try:
         newhabit_statinfo = {"HabitName":habit_name , "Created Date":cache[habit_name]["Created Date"] , "Total Dids":cache[habit_name]["Total Dids"] , "Total Misses":cache[habit_name]["Total Misses"] , "Streak":cache[habit_name]["Streak"]}
         with open("HabitStats.csv","a",newline='') as habitstats_file:
@@ -162,11 +158,11 @@ def addhabit_to_statfile(habit_name,cache): #add cache to the args
         if str(e) == habit_name:
             print(f"Something went wrong habit -{habit_name}- hasn't been created")
         else:
-            print(e)
+            print(f"Habit not added to HabitStats.csv. Error: {e}")
 
 #-----------------------------------------------------------------------------------------------------------------------#
 
 def addhabit_to_logfile(habit_name):
-    habitlog_file = pd.read_csv('HabitLog.csv')
-    habitlog_file.insert(loc = len(habitlog_file.columns), column = habit_name, value = 0)
-    habitlog_file.to_csv("HabitLog.csv", index=False)
+        habitlog_file = pd.read_csv('HabitLog.csv')
+        habitlog_file.insert(loc = len(habitlog_file.columns), column = habit_name, value = 0)
+        habitlog_file.to_csv("HabitLog.csv", index=False)

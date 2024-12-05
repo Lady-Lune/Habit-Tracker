@@ -53,7 +53,10 @@ except FileNotFoundError:
 while True:
     try:
         mainmenu()
-        menu_cmd = int(input('Select a number : '))
+        menu_cmd = input('Select a number : ')
+        if (menu_cmd == 'e') or (menu_cmd == 'E'):
+                quit()
+        menu_cmd = int(menu_cmd)
         if menu_cmd > 5 or menu_cmd < 1:
             raise ValueError
         else:
@@ -67,5 +70,5 @@ while True:
                 edithabitmenu()
             elif menu_cmd == 5:
                 deletehabitmenu()
-    except ValueError:
-        print("Please enter a number between 1-5")  
+    except Exception:
+        print("Please enter a number between 1-5)")  

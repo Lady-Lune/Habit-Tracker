@@ -11,29 +11,29 @@ def deletehabitmenu():
     habit_file = habit_file.fillna(value=' ')
     habit_list = habit_file.index.to_list()
      
-    
+    # Display
+    print('')
     print('*'*66)
     print(f"|{'Delete Habit':^64}|")
     print('|'+'-'*64+'|')
-    for i,habit in enumerate(habit_list):
+    for i,habit in enumerate(habit_list, start=1):
         print(f"|{' '*16}{i:>14}  {habit:<16}{' '*16}|")
     print(f"|{" e: exit":<64}|")
     print('*'*66)
+    print('')
     
     while True:
         try:
             delhabit_ind = input("Enter number to select corresponding habit: ")
             if delhabit_ind == 'e':
-                #mainmenu()
-                #break
-                return #test
+                return
             else:
                 delhabit_ind = int(delhabit_ind)
-                if not ((delhabit_ind >= 0) and (delhabit_ind < len(habit_list))):
+                if not ((delhabit_ind >= 1) and (delhabit_ind <= len(habit_list))):
                     raise IndexError(delhabit_ind, "not an accepted number")
                 else:
                     habitstats_file = pd.read_csv("HabitStats.csv", index_col="HabitName")
-                    delhabit = habit_list[delhabit_ind]
+                    delhabit = habit_list[delhabit_ind-1]
                     print('')
                     print(f"{' '*16}{'*'*34}{' '*16}") 
                     print(f"{' '*16}|{delhabit:^32}|{' '*16}")
@@ -50,7 +50,10 @@ def deletehabitmenu():
                     deletehabitmenu()
                     break
         except Exception as e:
-            print(f"Please enter e or a number between 0-{len(habit_list)}:{e}")
+            if isinstance(e,ValueError):
+                print("Please enter e or a valid number")
+            else:
+                print(f"Please enter e or a valid number. Error: {e}")
 
 #-----------------------------------------------------------------------------------------------------------------------#
 
