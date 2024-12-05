@@ -1,10 +1,8 @@
 #Importing things
 import datetime
-import time
 import csv
 import pandas as pd
 import re
-import numpy as np
 
 #=======================================================================================================================#
 ## SETTING UP
@@ -14,41 +12,38 @@ cache = {}
 #Create CSV for Habits - Habits.csv
 
 try:
-    df = pd.read_csv("Habit.csv")
+    pd.read_csv("Habit.csv")
 except FileNotFoundError:
-    with open("Habit.csv","w", newline='') as HabitFile:
-        csv_writer = csv.writer(HabitFile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+    with open("Habit.csv","w", newline='') as habit_file:
+        csv_writer = csv.writer(habit_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
         csv_writer.writerow(['HabitName' , 'Time' , 'Before' , 'After'])
-    HabitFile.close()
 
 #-----------------------------------------------------------------------------------------------------------------------#
 
 #CSV for Habit Stats - HabitStats.csv
 
 try:
-    df = pd.read_csv("HabitStats.csv")
+    pd.read_csv("HabitStats.csv")
 except FileNotFoundError:
-    with open("HabitStats.csv","w",newline='') as HabitFile:
-        csv_writer = csv.writer(HabitFile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+    with open("HabitStats.csv","w",newline='') as habitstats_file:
+        csv_writer = csv.writer(habitstats_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
         csv_writer.writerow(['HabitName' , 'Created Date' , 'Edited Date' , 'Total Dids' , 'Total Misses' , 'Streak'])
-    HabitFile.close()
 
 #-----------------------------------------------------------------------------------------------------------------------#
     
 #CSV for Logs - HabitLog.csv
 
 try:
-    df = pd.read_csv("HabitLog.csv")
+    pd.read_csv("HabitLog.csv")
 except FileNotFoundError:
-    with open("HabitLog.csv", "w", newline='') as HabitLogFile:
-        csv_writer=csv.writer(HabitLogFile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+    with open("HabitLog.csv", "w", newline='') as habitlog_file:
+        csv_writer=csv.writer(habitlog_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
         csv_writer.writerow(["Date"])
-    HabitLogFile.close()
 
 #=======================================================================================================================#
 #   0   Main Menu
 #=======================================================================================================================#
-def MainMenu(): 
+def mainmenu(): 
     print("*"*66)
     print('*' + f'{'Welcome to Habit Tracker':^64}' + '*')
     print('*' + f'{next_logdate():^64}' + '*')
@@ -70,15 +65,15 @@ def MainMenu():
                 raise ValueError
             else:
                 if menu_cmd == 1:
-                    ViewHabitMenu()
+                    viewhabitmenu()
                 elif menu_cmd == 2:
-                    UpdateHabitMenu(cache) 
+                    updatehabitmenu(cache) 
                 elif menu_cmd == 3:
-                    CreateHabitMenu(cache) 
+                    createhabitmenu(cache) 
                 elif menu_cmd == 4:
-                    EditHabitMenu()
+                    edithabitmenu()
                 elif menu_cmd == 5:
-                    DeleteHabitMenu()
+                    deletehabitmenu()
         except ValueError:
             print("Please enter a number between 1-5")       
 #-----------------------------------------------------------------------------------------------------------------------#
@@ -107,9 +102,9 @@ def next_logdate():
 #   1   View Habits
 #=======================================================================================================================#
 
-def ViewHabitMenu():
-    HabitStatsFile = pd.read_csv("HabitStats.csv", index_col="HabitName")
-    habit_list = HabitStatsFile.index.to_list()
+def viewhabitmenu():
+    habitstats_file = pd.read_csv("HabitStats.csv", index_col="HabitName")
+    habit_list = habitstats_file.index.to_list()
     
     print('*'*66)
     print(f"|{'View Habit':^64}|")
@@ -123,7 +118,7 @@ def ViewHabitMenu():
         try:
             viewhabit_ind = input("Enter number to select corresponding habit: ")
             if viewhabit_ind == 'e':
-                MainMenu()
+                mainmenu()
                 break
             else:
                 viewhabit_ind = int(viewhabit_ind)
@@ -141,16 +136,16 @@ def ViewHabitMenu():
 #-----------------------------------------------------------------------------------------------------------------------#
 
 def habitview(viewhabit_ind):
-    HabitStatsFile = pd.read_csv("HabitStats.csv", index_col="HabitName")
-    habit_list = HabitStatsFile.index.to_list()
+    habitstats_file = pd.read_csv("HabitStats.csv", index_col="HabitName")
+    habit_list = habitstats_file.index.to_list()
     viewhabit = habit_list[viewhabit_ind] 
     print('')
     print(f"{' '*16}{'*'*34}{' '*16}") 
     print(f"{' '*16}|{viewhabit:^32}|{' '*16}")
     print(f"{' '*16}|{'-'*32}|{' '*16}")
-    print(f"{' '*16}|{" You Did ":<16}{HabitStatsFile.loc[viewhabit,"Total Dids"]:<16}|{' '*16}")
-    print(f"{' '*16}|{" You Missed":<16}{HabitStatsFile.loc[viewhabit,"Total Misses"]:<16}|{' '*16}")
-    print(f"{' '*16}|{" Habit Streak":<16}{HabitStatsFile.loc[viewhabit,"Streak"]:<16}|{' '*16}")
+    print(f"{' '*16}|{" You Did ":<16}{habitstats_file.loc[viewhabit,"Total Dids"]:<16}|{' '*16}")
+    print(f"{' '*16}|{" You Missed":<16}{habitstats_file.loc[viewhabit,"Total Misses"]:<16}|{' '*16}")
+    print(f"{' '*16}|{" Habit Streak":<16}{habitstats_file.loc[viewhabit,"Streak"]:<16}|{' '*16}")
     print(f"{' '*16}{'*'*34}{' '*16}") 
     print(f"{" e: exit":<22}{"p: previous":^22}{"n: next ":>22}")
     print('')
@@ -158,7 +153,7 @@ def habitview(viewhabit_ind):
         try:
             viewhabit_cmd = input("Enter command ")
             if viewhabit_cmd == 'e':
-                ViewHabitMenu()
+                viewhabitmenu()
                 break
             elif viewhabit_cmd == 'n':
                 viewhabit_ind += 1
@@ -182,14 +177,14 @@ def habitview(viewhabit_ind):
 #=======================================================================================================================#
 
 #Log Habits as done or not done
-def UpdateHabitMenu(cache):   
+def updatehabitmenu(cache):   
     #Get the current list of Habits in Habit.csv
-    HabitFile = pd.read_csv("Habit.csv")
-    habit_list = HabitFile["HabitName"].to_list()
+    habit_file = pd.read_csv("Habit.csv")
+    habit_list = habit_file["HabitName"].to_list()
 
     #Get the current list of Habits in HabitLog.csv
-    HabitLog = pd.read_csv("HabitLog.csv",index_col="Date", parse_dates=True, date_format='%d/%m/%Y')
-    HabitLog_habitlist = HabitLog.columns.to_list()
+    habitlog_file = pd.read_csv("HabitLog.csv",index_col="Date", parse_dates=True, date_format='%d/%m/%Y')
+    habitlog_habitlist = habitlog_file.columns.to_list()
     
     #Set up temp storage
     try:
@@ -203,16 +198,16 @@ def UpdateHabitMenu(cache):
     
     #Set up the temp dict
     if today_record == {}:
-        for each in HabitLog.columns:
+        for each in habitlog_file.columns:
             today_record.update({each:0})
     
     #Check if all Habits exist in HabitLog file
     try:
-        if habit_list != HabitLog_habitlist:
+        if habit_list != habitlog_habitlist:
             raise Exception("Habits don't match between Habit.csv and HabitStats.csv")
     except Exception as e:
         print(e)
-        MainMenu()
+        mainmenu()
                 
     #Current Date
     current_date = next_logdate()
@@ -225,9 +220,17 @@ def UpdateHabitMenu(cache):
     print('|'+'-'*64+'|')
     for i,habit in enumerate(habit_list):
         print(f"|{' '*16}{i:>14}  {habit:<16}{' '*16}|")
+    print('|'+' '*64+'|')
+    print(f"|{" enter 'n' and proceed to next day to save your habit log ":<64}|")
+    print('|'+'-'*64+'|')
     print(f"|{" e: exit":<32}{"n: next day ":>32}|")
     print('*'*66)
-    
+
+    updateinput_handler(habit_list, current_date, cache)
+
+
+#-----------------------------------------------------------------------------------------------------------------------#
+def updateinput_handler(habit_list, current_date, cache):    
     #Choose Habit to Edit
     while True:
         try:
@@ -240,14 +243,14 @@ def UpdateHabitMenu(cache):
             elif upd_input == 'e':
                 print("Exiting...")
                 print("!! Habit logs you have input so far will be lost if program is closed without proceeding to next day !!")
-                MainMenu()
+                mainmenu()
                 break
             elif upd_input == 'n':
                 print(f"Recording Habit Log for {current_date}....")
                 record_to_logfile(current_date,today_record)
                 update_habitstats(today_record)
                 cache["TodayHabitLog"] = {}
-                MainMenu()
+                mainmenu()
                 break
         except Exception as e: 
             if str(e) == f"invalid literal for int() with base 10: '{upd_input}'":
@@ -281,48 +284,47 @@ def record_to_logfile(current_date,today_record):
         dict_to_add = {'Date':current_date}
         dict_to_add.update(today_record)
         dict_to_add_keys = list(dict_to_add.keys())
-        with open("HabitLog.csv","a",newline='') as HabitLogFile:
-            csv_d_writer = csv.DictWriter(HabitLogFile, fieldnames = dict_to_add_keys)
+        with open("HabitLog.csv","a",newline='') as habitlog_file:
+            csv_d_writer = csv.DictWriter(habitlog_file, fieldnames = dict_to_add_keys)
             csv_d_writer.writerow(dict_to_add)
-        HabitLogFile.close()
     except Exception as e:
         print(e)
 
 #-----------------------------------------------------------------------------------------------------------------------#
 
 def update_habitstats(today_record):
-    HabitStatsFile = pd.read_csv("HabitStats.csv",index_col="HabitName", dtype={'Created Date':object, 'Total Dids':int, 'Total Misses':int, 'Streak':int})
+    habitstats_file = pd.read_csv("HabitStats.csv",index_col="HabitName", dtype={'Created Date':object, 'Total Dids':int, 'Total Misses':int, 'Streak':int})
     for habit in list(today_record.keys()):
         
-        habit_dids = HabitStatsFile.loc[habit, "Total Dids"]
-        habit_misses = HabitStatsFile.loc[habit, "Total Misses"]
-        habit_streak = HabitStatsFile.loc[habit, "Streak"]
+        habit_dids = habitstats_file.loc[habit, "Total Dids"]
+        habit_misses = habitstats_file.loc[habit, "Total Misses"]
+        habit_streak = habitstats_file.loc[habit, "Streak"]
         
         if today_record[habit] == 0:
             habit_streak = 0 
             habit_misses += 1
         
-            HabitStatsFile.loc[habit, "Total Misses"] = habit_misses
-            HabitStatsFile.loc[habit, "Streak"] = habit_streak
+            habitstats_file.loc[habit, "Total Misses"] = habit_misses
+            habitstats_file.loc[habit, "Streak"] = habit_streak
 
         elif today_record[habit] == 1:
             habit_streak += 1
             habit_dids += 1
         
-            HabitStatsFile.loc[habit, "Total Dids"] = habit_dids 
-            HabitStatsFile.loc[habit, "Streak"] = habit_streak
+            habitstats_file.loc[habit, "Total Dids"] = habit_dids 
+            habitstats_file.loc[habit, "Streak"] = habit_streak
         
-    HabitStatsFile.to_csv("HabitStats.csv")
+    habitstats_file.to_csv("HabitStats.csv")
 
 
 #=======================================================================================================================#
 #   3   Create New Habit
 #=======================================================================================================================#
 
-def CreateHabitMenu(cache):
+def createhabitmenu(cache):
     #List of current habits
-    HabitFile = pd.read_csv("Habit.csv")
-    habit_list = HabitFile["HabitName"].to_list()
+    habit_file = pd.read_csv("Habit.csv")
+    habit_list = habit_file["HabitName"].to_list()
 
     #Display
     print('*'*66)
@@ -347,8 +349,8 @@ def CreateHabitMenu(cache):
     #get Time
     while True:
         try:
-            Time = input(f"{"AT (in 24hr format)" :<16}  ")
-            Time = time_conv(Time)
+            habit_time = input(f"{"AT (in 24hr format)" :<16}  ")
+            habit_time = time_conv(habit_time)
             break
         except ValueError as e:
             if str(e) == "invalid literal for int() with base 10: ''":
@@ -356,33 +358,33 @@ def CreateHabitMenu(cache):
             else: print(e)
     
     #Get habit stack
-    After = input (f"{"AFTER I":<16}  ").lower()
+    after = input (f"{"AFTER I":<16}  ").lower()
 
     #Get habit name
     while True:
         try:
-            HabitName = input(f"{"I WANT TO":<16}  ").lower()
+            habit_name = input(f"{"I WANT TO":<16}  ").lower()
             #Check if same habit exists
-            if HabitName in habit_list:
+            if habit_name in habit_list:
                 raise Exception('Habit Already Exists')
-            if HabitName == '':
+            if habit_name == '':
                 raise Exception("Please enter the habit")
             break
         except Exception as e:
             print(e)
     
     #Get habit stack
-    Before = input(f"{"BEFORE I":<16}  ").lower()
+    before = input(f"{"BEFORE I":<16}  ").lower()
     print('')
     print('*'*66)
     
     #Get Current Date
     created_date = datetime.datetime.today().strftime('%d/%m/%Y')
 
-    habit_info = {HabitName : {
-        "Time" : Time,
-        "Before": Before,
-        "After" : After,
+    habit_info = {habit_name : {
+        "Time" : habit_time,
+        "Before": before,
+        "After" : after,
         "Created Date" : created_date,
         "Did":0,
         "Total Dids":0,
@@ -392,12 +394,12 @@ def CreateHabitMenu(cache):
 
      #update cache
     cache.update(habit_info)
-    CreateNewHabit(habit_info, HabitName)
+    createnewhabit(habit_info, habit_name)
 
 #-----------------------------------------------------------------------------------------------------------------------#
-def time_conv(time):
+def time_conv(habit_time):
     pattern = r"[^\d?\d?]"
-    result = re.split(pattern, time)
+    result = re.split(pattern, habit_time)
     result = map(int, result)
     H,M = result
 
@@ -408,16 +410,16 @@ def time_conv(time):
         raise ValueError("Minuite must be between 00-60")
 
 #Convert to a standard time format
-    Time = datetime.time(hour=H, minute=M)
-    Time = Time.strftime('%H:%M') 
-    return Time
+    formatted_time = datetime.time(hour=H, minute=M)
+    formatted_time = formatted_time.strftime('%H:%M') 
+    return formatted_time
 
 #-----------------------------------------------------------------------------------------------------------------------#
 
-def CreateNewHabit(habit_info, HabitName):
+def createnewhabit(habit_info, habit_name):
     print('-'*66)
     print('')
-    print(f"AT < {habit_info[HabitName]["Time"] }> AFTER I < {habit_info[HabitName]["After"]} > I WILL < {HabitName} > BEFORE I < {habit_info[HabitName]["Before"]} >")
+    print(f"AT < {habit_info[habit_name]["Time"] }> AFTER I < {habit_info[habit_name]["After"]} > I WILL < {habit_name} > BEFORE I < {habit_info[habit_name]["Before"]} >")
     print('')
     print(f"{" e: exit without saving":<33}{"c: create new habit ":>33}")
     print('-'*66)
@@ -426,15 +428,15 @@ def CreateNewHabit(habit_info, HabitName):
         try:
             createhabit_cmd = input("Enter Command: ")
             if createhabit_cmd == 'e':
-                MainMenu()
+                mainmenu()
                 break
             elif createhabit_cmd == 'c':
-                addhabit_to_habitfile(HabitName, cache)
-                addhabit_to_statfile(HabitName, cache)
-                addhabit_to_logfile(HabitName)
-                print(f"Habit Created < {HabitName} > ")
-                cache.pop(HabitName)
-                MainMenu()
+                addhabit_to_habitfile(habit_name, cache)
+                addhabit_to_statfile(habit_name, cache)
+                addhabit_to_logfile(habit_name)
+                print(f"Habit Created < {habit_name} > ")
+                cache.pop(habit_name)
+                mainmenu()
                 break
             else:
                 raise ValueError("Invalid input",createhabit_cmd)
@@ -443,49 +445,47 @@ def CreateNewHabit(habit_info, HabitName):
 
 #-----------------------------------------------------------------------------------------------------------------------#
 
-def addhabit_to_habitfile(HabitName,cache):
+def addhabit_to_habitfile(habit_name,cache):
     try:
-        newhabit_info = {"HabitName":HabitName , "Time": cache[HabitName]["Time"] ,"Before":cache[HabitName]["Before"] , "After":cache[HabitName]["After"]}
-        with open("Habit.csv","a",newline='') as HabitsFile:
-            csv_d_writer = csv.DictWriter(HabitsFile, fieldnames = ['HabitName' , 'Time' , 'Before' , 'After'])
+        newhabit_info = {"HabitName":habit_name , "Time": cache[habit_name]["Time"] ,"Before":cache[habit_name]["Before"] , "After":cache[habit_name]["After"]}
+        with open("Habit.csv","a",newline='') as habit_file:
+            csv_d_writer = csv.DictWriter(habit_file, fieldnames = ['HabitName' , 'Time' , 'Before' , 'After'])
             csv_d_writer.writerow(newhabit_info)
-        HabitsFile.close()  
     except Exception as e:
-        if str(e) == HabitName:
-            print(f"Something went wrong habit -{HabitName}- hasn't been created")
+        if str(e) == habit_name:
+            print(f"Something went wrong habit -{habit_name}- hasn't been created")
         else:
             print(e)
 
 #-----------------------------------------------------------------------------------------------------------------------#
 
-def addhabit_to_statfile(HabitName, cache): #add cache to the args
+def addhabit_to_statfile(habit_name, cache): #add cache to the args
     try:
-        newhabit_statinfo = {"HabitName":HabitName , "Created Date":cache[HabitName]["Created Date"] , "Total Dids":cache[HabitName]["Total Dids"] , "Total Misses":cache[HabitName]["Total Misses"] , "Streak":cache[HabitName]["Streak"]}
-        with open("HabitStats.csv","a",newline='') as HabitStatFile:
-            csv_d_writer = csv.DictWriter(HabitStatFile, fieldnames = ["HabitName" , "Created Date" , "Total Dids" , "Total Misses" , "Streak"])
+        newhabit_statinfo = {"HabitName":habit_name , "Created Date":cache[habit_name]["Created Date"] , "Total Dids":cache[habit_name]["Total Dids"] , "Total Misses":cache[habit_name]["Total Misses"] , "Streak":cache[habit_name]["Streak"]}
+        with open("HabitStats.csv","a",newline='') as habitstats_file:
+            csv_d_writer = csv.DictWriter(habitstats_file, fieldnames = ["HabitName" , "Created Date" , "Total Dids" , "Total Misses" , "Streak"])
             csv_d_writer.writerow(newhabit_statinfo)
-        HabitStatFile.close()
     except Exception as e:
-        if str(e) == HabitName:
-            print(f"Something went wrong habit -{HabitName}- hasn't been created")
+        if str(e) == habit_name:
+            print(f"Something went wrong habit -{habit_name}- hasn't been created")
         else:
             print(e)
 
 #-----------------------------------------------------------------------------------------------------------------------#
 
-def addhabit_to_logfile(HabitName):
-    HabitLog = pd.read_csv('HabitLog.csv')
-    HabitLog.insert(loc = len(HabitLog.columns), column = HabitName, value = 0)
-    HabitLog.to_csv("HabitLog.csv", index=False)
+def addhabit_to_logfile(habit_name):
+    habitlog_file = pd.read_csv('HabitLog.csv')
+    habitlog_file.insert(loc = len(habitlog_file.columns), column = habit_name, value = 0)
+    habitlog_file.to_csv("HabitLog.csv", index=False)
 
 #=======================================================================================================================#
 #   4   Edit Habit
 #=======================================================================================================================#
 
 #Edit Existing Habit Names and Habit Contract
-def EditHabitMenu():
-    HabitFile = pd.read_csv("Habit.csv", index_col="HabitName")
-    habit_list = HabitFile.index.to_list()
+def edithabitmenu():
+    habit_file = pd.read_csv("Habit.csv", index_col="HabitName")
+    habit_list = habit_file.index.to_list()
     
     print('*'*66)
     print(f"|{'Edit Habit':^64}|")
@@ -499,7 +499,7 @@ def EditHabitMenu():
         try:
             edithabit_ind = input("Enter number to select corresponding habit: ")
             if edithabit_ind == 'e':
-                MainMenu()
+                mainmenu()
                 break
             else:
                 edithabit_ind = int(edithabit_ind)
@@ -514,11 +514,11 @@ def EditHabitMenu():
 #-----------------------------------------------------------------------------------------------------------------------#
 
 def edit_habitinfo(edithabit_ind):
-    HabitFile = pd.read_csv("Habit.csv", index_col="HabitName")
-    HabitFile = HabitFile.fillna(value=' ')
-    habit_list = HabitFile.index.to_list()
+    habit_file = pd.read_csv("Habit.csv", index_col="HabitName")
+    habit_file = habit_file.fillna(value=' ')
+    habit_list = habit_file.index.to_list()
     edithabit = habit_list[edithabit_ind]
-    habit_info = HabitFile.loc[edithabit]
+    habit_info = habit_file.loc[edithabit]
     
     
     print("Fetching Habit....")
@@ -533,57 +533,57 @@ def edit_habitinfo(edithabit_ind):
         edit_infotype = input("Choose option to edit : ")
         try:
             if edit_infotype == 'e':
-                HabitFile = pd.read_csv("Habit.csv", index_col="HabitName")
-                HabitFile = HabitFile.fillna(value=' ')
-                habit_list = HabitFile.index.to_list()
+                habit_file = pd.read_csv("Habit.csv", index_col="HabitName")
+                habit_file = habit_file.fillna(value=' ')
+                habit_list = habit_file.index.to_list()
                 edithabit = habit_list[edithabit_ind]
-                habit_info = HabitFile.loc[edithabit]
+                habit_info = habit_file.loc[edithabit]
                 
                 print('-'*66)
                 print('')
                 print(f"AT < {habit_info["Time"] }> AFTER I < {habit_info["After"]} > I WILL < {edithabit} > BEFORE I < {habit_info["Before"]} >")
                 print('-'*66)
                 
-                EditHabitMenu()
+                edithabitmenu()
                 break
             
             elif edit_infotype == 'a':
-                HabitFile = pd.read_csv("Habit.csv", index_col="HabitName")
-                HabitFile = HabitFile.fillna(value=' ')
-                habit_list = HabitFile.index.to_list()
+                habit_file = pd.read_csv("Habit.csv", index_col="HabitName")
+                habit_file = habit_file.fillna(value=' ')
+                habit_list = habit_file.index.to_list()
                 edithabit = habit_list[edithabit_ind]
 
                 
-                new_entry = input(f"Change {HabitFile.loc[edithabit, "Time"]} to? ")
+                new_entry = input(f"Change {habit_file.loc[edithabit, "Time"]} to? ")
                 new_entry = time_conv(new_entry)
                 edit_habitfile(edithabit, "Time", new_entry)
             
             elif edit_infotype == 'af':
-                HabitFile = pd.read_csv("Habit.csv", index_col="HabitName")
-                HabitFile = HabitFile.fillna(value=' ')
-                habit_list = HabitFile.index.to_list()
+                habit_file = pd.read_csv("Habit.csv", index_col="HabitName")
+                habit_file = habit_file.fillna(value=' ')
+                habit_list = habit_file.index.to_list()
                 edithabit = habit_list[edithabit_ind]
 
                 
-                new_entry = input(f"Change {HabitFile.loc[edithabit, "After"]} to? ").lower()
+                new_entry = input(f"Change {habit_file.loc[edithabit, "After"]} to? ").lower()
                 edit_habitfile(edithabit, "After", new_entry)
             
             elif edit_infotype == 'h':
                 
                 new_habitname = input(f"Change {edithabit} to?").lower()
 
-                rename_habit(edithabit, new_habitname, filename="HabitLog.csv",indexcol="Date",Axis="columns")
-                rename_habit(edithabit, new_habitname, filename="Habit.csv",indexcol="HabitName",Axis="index")
-                rename_habit(edithabit, new_habitname, filename="HabitStats.csv",indexcol="HabitName",Axis="index")
+                rename_habit(edithabit, new_habitname, filename="HabitLog.csv",indexcol="Date",df_axis="columns")
+                rename_habit(edithabit, new_habitname, filename="Habit.csv",indexcol="HabitName",df_axis="index")
+                rename_habit(edithabit, new_habitname, filename="HabitStats.csv",indexcol="HabitName",df_axis="index")
                 
             elif edit_infotype == 'b':
-                HabitFile = pd.read_csv("Habit.csv", index_col="HabitName")
-                HabitFile = HabitFile.fillna(value=' ')
-                habit_list = HabitFile.index.to_list()
+                habit_file = pd.read_csv("Habit.csv", index_col="HabitName")
+                habit_file = habit_file.fillna(value=' ')
+                habit_list = habit_file.index.to_list()
                 edithabit = habit_list[edithabit_ind]
 
                 
-                new_entry = input(f"Change {HabitFile.loc[edithabit, "Before"]} to? ").lower()
+                new_entry = input(f"Change {habit_file.loc[edithabit, "Before"]} to? ").lower()
                 edit_habitfile(edithabit, "Before", new_entry)
             
             else:
@@ -594,26 +594,26 @@ def edit_habitinfo(edithabit_ind):
 
 #-----------------------------------------------------------------------------------------------------------------------#
 
-def edit_habitfile(HabitName, column, new_entry):
-    HabitFile = pd.read_csv("Habit.csv", index_col="HabitName",dtype={"HabitName":object,"Time":object,"Before":object,"After":object})
-    HabitFile.loc[HabitName, column] = new_entry
-    HabitFile.to_csv("Habit.csv", index=True)
+def edit_habitfile(habit_name, column, new_entry):
+    habit_file = pd.read_csv("Habit.csv", index_col="HabitName",dtype={"HabitName":object,"Time":object,"Before":object,"After":object})
+    habit_file.loc[habit_name, column] = new_entry
+    habit_file.to_csv("Habit.csv", index=True)
 
 #-----------------------------------------------------------------------------------------------------------------------#
 
-def rename_habit(old_habitname, new_habitname, filename, indexcol, Axis):
+def rename_habit(old_habitname, new_habitname, filename, indexcol, df_axis):
     file_df = pd.read_csv(filename, index_col=indexcol)
-    file_df.rename({old_habitname:new_habitname}, axis=Axis, inplace=True)
+    file_df.rename({old_habitname:new_habitname}, axis=df_axis, inplace=True)
     file_df.to_csv(filename)
 
 #=======================================================================================================================#
 #   5   Delete Habit
 #=======================================================================================================================#
 
-def DeleteHabitMenu():
-    HabitFile = pd.read_csv("Habit.csv", index_col="HabitName")
-    HabitFile = HabitFile.fillna(value=' ')
-    habit_list = HabitFile.index.to_list()
+def deletehabitmenu():
+    habit_file = pd.read_csv("Habit.csv", index_col="HabitName")
+    habit_file = habit_file.fillna(value=' ')
+    habit_list = habit_file.index.to_list()
      
     
     print('*'*66)
@@ -628,42 +628,42 @@ def DeleteHabitMenu():
         try:
             delhabit_ind = input("Enter number to select corresponding habit: ")
             if delhabit_ind == 'e':
-                MainMenu()
+                mainmenu()
                 break
             else:
                 delhabit_ind = int(delhabit_ind)
                 if not ((delhabit_ind >= 0) and (delhabit_ind < len(habit_list))):
                     raise IndexError(delhabit_ind, "not an accepted number")
                 else:
-                    HabitStatsFile = pd.read_csv("HabitStats.csv", index_col="HabitName")
+                    habitstats_file = pd.read_csv("HabitStats.csv", index_col="HabitName")
                     delhabit = habit_list[delhabit_ind]
                     print('')
                     print(f"{' '*16}{'*'*34}{' '*16}") 
                     print(f"{' '*16}|{delhabit:^32}|{' '*16}")
                     print(f"{' '*16}|{'-'*32}|{' '*16}")
-                    print(f"{' '*16}|{" You Did ":<16}{str(HabitStatsFile.loc[delhabit,"Total Dids"]):<16}|{' '*16}")
-                    print(f"{' '*16}|{" You Missed":<16}{str(HabitStatsFile.loc[delhabit,"Total Misses"]):<16}|{' '*16}")
-                    print(f"{' '*16}|{" Habit Streak":<16}{str(HabitStatsFile.loc[delhabit,"Streak"]):<16}|{' '*16}")
+                    print(f"{' '*16}|{" You Did ":<16}{str(habitstats_file.loc[delhabit,"Total Dids"]):<16}|{' '*16}")
+                    print(f"{' '*16}|{" You Missed":<16}{str(habitstats_file.loc[delhabit,"Total Misses"]):<16}|{' '*16}")
+                    print(f"{' '*16}|{" Habit Streak":<16}{str(habitstats_file.loc[delhabit,"Streak"]):<16}|{' '*16}")
                     print(f"{' '*16}{'*'*34}{' '*16}") 
                     print('')
                     print(f"Deleting Habit < {delhabit} >....")
                     delete_habit("HabitStats.csv","HabitName",delhabit,"index")
                     delete_habit("Habit.csv","HabitName",delhabit,"index")
                     delete_habit("HabitLog.csv","Date",delhabit,"columns")
-                    DeleteHabitMenu()
+                    deletehabitmenu()
                     break
         except Exception as e:
             print(f"Please enter e or a number between 0-{len(habit_list)}:{e}")
 
 #-----------------------------------------------------------------------------------------------------------------------#
 
-def delete_habit(File,indexcol,delhabit,Axis):
-    file_df = pd.read_csv(File, index_col=indexcol)
-    edited_df = file_df.drop(delhabit,axis=Axis)
-    edited_df.to_csv(File) 
+def delete_habit(csvfile,indexcol,delhabit,df_axis):
+    file_df = pd.read_csv(csvfile, index_col=indexcol)
+    edited_df = file_df.drop(delhabit,axis=df_axis)
+    edited_df.to_csv(csvfile) 
 
 #=======================================================================================================================#
 
-MainMenu()
+mainmenu()
 
 #=======================================================================================================================#
