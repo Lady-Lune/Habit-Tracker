@@ -2,12 +2,13 @@
 import csv
 import pandas as pd
 
-from main_menu import mainmenu
-from viewhabit_menu import viewhabitmenu
-from updatehabit_menu import updatehabitmenu
-from createhabit_menu import createhabitmenu
-from edithabit_menu import edithabitmenu
-from deletehabit_menu import deletehabitmenu
+from menus.main_menu import mainmenu
+from menus.viewhabit_menu import viewhabitmenu
+from menus.updatehabit_menu import updatehabitmenu
+from menus.createhabit_menu import createhabitmenu
+from menus.edithabit_menu import edithabitmenu
+from menus.deletehabit_menu import deletehabitmenu
+
 
 #=======================================================================================================================#
 ## SETTING UP
@@ -33,7 +34,7 @@ try:
 except FileNotFoundError:
     with open("HabitStats.csv","w",newline='') as habitstats_file:
         csv_writer = csv.writer(habitstats_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
-        csv_writer.writerow(['HabitName' , 'Created Date' , 'Edited Date' , 'Total Dids' , 'Total Misses' , 'Streak'])
+        csv_writer.writerow(['HabitName' , 'Created Date' , 'Total Dids' , 'Total Misses' , 'Streak'])
 
 #-----------------------------------------------------------------------------------------------------------------------#
     
@@ -55,7 +56,7 @@ while True:
         mainmenu()
         menu_cmd = input('Select a number : ')
         if (menu_cmd == 'e') or (menu_cmd == 'E'):
-                quit()
+            quit()
         menu_cmd = int(menu_cmd)
         if menu_cmd > 5 or menu_cmd < 1:
             raise ValueError

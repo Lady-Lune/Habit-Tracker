@@ -1,7 +1,9 @@
 #Importing things
 import pandas as pd
 
-from createhabit_menu import time_conv
+from menus.createhabit_menu import time_conv
+
+
 ##=======================================================================================================================#
 #   4   Edit Habit
 #=======================================================================================================================#
@@ -42,6 +44,8 @@ def edithabitmenu():
 #-----------------------------------------------------------------------------------------------------------------------#
 
 def edit_habitinfo(edithabit_ind):
+
+    #from menus.createhabit_menu import time_conv
     habit_file = pd.read_csv("Habit.csv", index_col="HabitName")
     habit_file = habit_file.fillna(value=' ')
     habit_list = habit_file.index.to_list()
@@ -100,7 +104,7 @@ def edit_habitinfo(edithabit_ind):
             
             elif edit_infotype == 'h':
                 
-                new_habitname = input(f"Change {edithabit} to?").lower()
+                new_habitname = input(f"Change {edithabit} to? ").lower()
 
                 rename_habit(edithabit, new_habitname, filename="HabitLog.csv",indexcol="Date",df_axis="columns")
                 rename_habit(edithabit, new_habitname, filename="Habit.csv",indexcol="HabitName",df_axis="index")

@@ -2,9 +2,7 @@
 import csv
 import pandas as pd
 
-
-from main_menu import next_logdate
-
+from menus.main_menu import next_logdate
 
 #=======================================================================================================================#
 #   2   Update Habit Log
@@ -12,6 +10,9 @@ from main_menu import next_logdate
 
 #Log Habits as done or not done
 def updatehabitmenu(cache):   
+
+    #from menus.main_menu import next_logdate
+
     #Get the current list of Habits in Habit.csv
     habit_file = pd.read_csv("Habit.csv")
     habit_list = habit_file["HabitName"].to_list()
@@ -101,7 +102,7 @@ def updateinput_handler(habit_list, current_date,cache):
 def update_habitlog_dict(upd_habit, today_record):  
     while True:
         try:
-            ans = input(f"HABITTRACKER: Did you {upd_habit}? [y/n]")
+            ans = input(f"HABITTRACKER: Did you {upd_habit}? [y/n] ")
             if (ans == 'y') or (ans == 'Y'):
                 today_record[upd_habit] = 1
                 break
@@ -153,6 +154,10 @@ def update_habitstats(today_record):
                 habitstats_file.loc[habit, "Total Dids"] = habit_dids 
                 habitstats_file.loc[habit, "Streak"] = habit_streak
             
+            print(habit_dids)
+            print(habit_misses)
+            print(habit_streak)
+
         habitstats_file.to_csv("HabitStats.csv")
     except Exception as e:
         if isinstance(e, KeyError):
