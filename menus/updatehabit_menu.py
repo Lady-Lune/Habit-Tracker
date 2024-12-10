@@ -1,27 +1,25 @@
 #Importing things
 import csv
 import pandas as pd
+import datetime
 
-from menus.main_menu import next_logdate
 
 #=======================================================================================================================#
 #   2   Update Habit Log
 #=======================================================================================================================#
 
-#Log Habits as done or not done
+# Log Habits as done or not done
 def updatehabitmenu(cache):   
 
-    #from menus.main_menu import next_logdate
-
-    #Get the current list of Habits in Habit.csv
+    # Get the current list of Habits in Habit.csv
     habit_file = pd.read_csv("Habit.csv")
     habit_list = habit_file["HabitName"].to_list()
 
-    #Get the current list of Habits in HabitLog.csv
+    # Get the current list of Habits in HabitLog.csv
     habitlog_file = pd.read_csv("HabitLog.csv",index_col="Date", parse_dates=True, date_format='%d/%m/%Y')
     habitlog_habitlist = habitlog_file.columns.to_list()
     
-    #Set up temp storage
+    # Set up temp storage
     try:
         today_record = cache["TodayHabitLog"]
     except Exception as e:
@@ -32,12 +30,12 @@ def updatehabitmenu(cache):
             print(f"Error: {e}")
             return
     
-    #Set up the temp dict
+    # Set up the temp dict
     if today_record == {}:
         for each in habitlog_file.columns:
             today_record.update({each:0})
     
-    #Check if all Habits exist in HabitLog file
+    # Check if all Habits exist in HabitLog file
     try:
         if habit_list != habitlog_habitlist:
             raise Exception("Habits don't match between Habit.csv and HabitLog.csv")
@@ -45,10 +43,10 @@ def updatehabitmenu(cache):
         print(e)
         return
                 
-    #Current Date
+    # Current Date
     current_date = next_logdate()
     
-    #Display
+    # Display
     print('')
     print('*'*66)
     print(f"|{'Habit Log For :':>32} {current_date:<31}|")
@@ -56,58 +54,89 @@ def updatehabitmenu(cache):
     print(f"|{" Enter number to log corresponding habit":<64}|")
     print('|'+'-'*64+'|')
     for i,habit in enumerate(habit_list, start=1):
-        print(f"|{' '*16}{i:>14}  {habit:<16}{' '*16}|")
+        print(f"|{i:>30}  {habit:<32}|")
     print('|'+' '*64+'|')
     print(f"|{" enter 'n' and proceed to next day to save your habit log ":<64}|")
     print('|'+'-'*64+'|')
-    print(f"|{" e: exit":<32}{"n: next day ":>32}|")
+    print(f"|{" e: exit":<32}{"nd: next day ":>32}|")
     print('*'*66)
     print('')
 
+    #Handle input 
     updateinput_handler(habit_list, current_date,cache)
 
+#-----------------------------------------------------------------------------------------------------------------------#
+
+#TODO: make this documentation Find Next day after the last day in the habit log file
+def next_logdate():
+    habitlog_file = pd.read_csv("HabitLog.csv")
+    
+    
+    if (len(habitlog_file))==0:
+        #date = today if HabitLog.csv is empty
+        next_date = datetime.datetime.today().strftime('%d/%m/%Y')
+   
+    else:
+        #get last date
+        last_date = habitlog_file.loc[len(habitlog_file)-1,"Date"]
+        last_date = datetime.datetime.strptime(last_date,'%d/%m/%Y')
+        
+        #get next day date
+        delta =  datetime.timedelta(days=1)
+        next_date = last_date + delta
+        next_date = datetime.datetime.strftime(next_date,'%d/%m/%Y') 
+    return next_date    
 
 #-----------------------------------------------------------------------------------------------------------------------#
 def updateinput_handler(habit_list, current_date,cache):    
+    
     #Choose Habit to Edit
     while True:
         try:
             upd_input = input("USER: ")
-            if (upd_input != 'e') and (upd_input != 'n'):
+
+            # keep choosing habits to log until user enter e or n
+            if (upd_input != 'e') and (upd_input != 'nd'):
                 upd_input = int(upd_input)
                 upd_habit = habit_list[upd_input-1]
                 today_record = cache["TodayHabitLog"]
                 update_habitlog_dict(upd_habit, today_record) 
+
+            # exit input window
             elif upd_input == 'e':
-                print("Exiting...")
+                print("")
                 print("!! Habit logs you have input so far will be lost if program is closed without proceeding to next day !!")
                 return 
-            elif upd_input == 'n':
+            
+            # save records and proceed to next day
+            elif upd_input == 'nd':
                 print(f"Recording Habit Log for {current_date}....")
+                today_record = cache["TodayHabitLog"]
                 record_to_logfile(current_date,today_record)
                 update_habitstats(today_record)
                 cache["TodayHabitLog"] = {}
                 return 
+            
         except Exception as e: 
-            if isinstance(e,ValueError):
-                print("Please enter a valid number, 'e' or 'n'")
-            elif isinstance(e,IndexError):
+            if isinstance(e,ValueError):    # entering non-numeric character other than 'e' and 'nd' 
+                print("Please enter a valid number, 'e' or 'nd'")
+            elif isinstance(e,IndexError):  # number is not in a valid range
                 print(f"{upd_input} does not correspond to a habit")
             else:
                 print(f"Please enter a valid input. (Error: {e})")
 
 #-----------------------------------------------------------------------------------------------------------------------#
 
-#Accepts Habit and today_record Dict as input - Alters the dictionary according to input
+#TODO: make this documentation Accepts Habit and today_record Dict as input - Alters the dictionary according to input
 def update_habitlog_dict(upd_habit, today_record):  
     while True:
         try:
             ans = input(f"HABITTRACKER: Did you {upd_habit}? [y/n] ")
             if (ans == 'y') or (ans == 'Y'):
-                today_record[upd_habit] = 1
+                today_record[upd_habit] = 1     # mark habit as 1 for done
                 break
             elif (ans == 'n') or (ans == 'N'):
-                today_record[upd_habit] = 0
+                today_record[upd_habit] = 0     # mark habit as 0 for not done
                 break
             else:
                 raise ValueError(ans, "is not a valid input, enter 'y' for yes and 'n' for no")
@@ -116,12 +145,15 @@ def update_habitlog_dict(upd_habit, today_record):
     return today_record
 
 #-----------------------------------------------------------------------------------------------------------------------#
-#Uses the current date (found through next_logdate()) a dict with habits as keys and 1/0 as value depending on did/miss status of the habit, and appends that to the HabitLog.csv file
+#TODO: make this documentation Uses the current date (found through next_logdate()) a dict with habits as keys and 1/0 as value depending on did/miss status of the habit, and appends that to the HabitLog.csv file
 def record_to_logfile(current_date,today_record):
     try:
+        # Get log in dictionary form
         dict_to_add = {'Date':current_date}
         dict_to_add.update(today_record)
         dict_to_add_habits = list(dict_to_add.keys())
+
+        # write dictionary to file
         with open("HabitLog.csv","a",newline='') as habitlog_file:
             csv_d_writer = csv.DictWriter(habitlog_file, fieldnames = dict_to_add_habits)
             csv_d_writer.writerow(dict_to_add)
@@ -131,15 +163,18 @@ def record_to_logfile(current_date,today_record):
 #-----------------------------------------------------------------------------------------------------------------------#
 
 def update_habitstats(today_record):
+    # get stats file
     habitstats_file = pd.read_csv("HabitStats.csv",index_col="HabitName", dtype={'Created Date':object, 'Total Dids':int, 'Total Misses':int, 'Streak':int})
     
     try:
         for habit in list(today_record.keys()):
             
+            #  get the stats for each habit
             habit_dids = habitstats_file.loc[habit, "Total Dids"]
             habit_misses = habitstats_file.loc[habit, "Total Misses"]
             habit_streak = habitstats_file.loc[habit, "Streak"]
             
+            # if habit not done --> edit misses and streak
             if today_record[habit] == 0:
                 habit_streak = 0 
                 habit_misses += 1
@@ -147,17 +182,15 @@ def update_habitstats(today_record):
                 habitstats_file.loc[habit, "Total Misses"] = habit_misses
                 habitstats_file.loc[habit, "Streak"] = habit_streak
 
+            # if habit done --> edit did-count and streak
             elif today_record[habit] == 1:
                 habit_streak += 1
                 habit_dids += 1
             
                 habitstats_file.loc[habit, "Total Dids"] = habit_dids 
                 habitstats_file.loc[habit, "Streak"] = habit_streak
-            
-            print(habit_dids)
-            print(habit_misses)
-            print(habit_streak)
 
+        # write dictionary to file
         habitstats_file.to_csv("HabitStats.csv")
     except Exception as e:
         if isinstance(e, KeyError):

@@ -1,16 +1,21 @@
 #Importing things
 import datetime
-import pandas as pd
 
 #=======================================================================================================================#
 #   0   Main Menu
 #=======================================================================================================================#
+"""
+Displays the main menu 
+Main menu view is 66 characters wide 
+It displays the current date and options to Create,View,Edit,Delete Habits and Update Daily Logs for each habit
+"""
+
 def mainmenu(): 
-    
+    today = datetime.datetime.today().strftime('%d/%m/%Y')
     print('')
     print("*"*66)
     print('*' + f'{'Welcome to Habit Tracker':^64}' + '*')
-    print('*' + f'{next_logdate():^64}' + '*')
+    print('*' + f'{today:^64}' + '*')
     print('*' + '-'*64 + '*')
     print('*' + f'{'MENU':^64}' + '*')
     print('*' + ' '*64 + '*')
@@ -27,20 +32,3 @@ def mainmenu():
 
 
 #-----------------------------------------------------------------------------------------------------------------------#
-
-#Find Next day after the last day in the habit log file
-def next_logdate():
-    habitlog_file = pd.read_csv("HabitLog.csv")
-    
-    #get last date
-    if (len(habitlog_file))==0:
-        next_date = datetime.datetime.today().strftime('%d/%m/%Y')
-    else:
-        last_date = habitlog_file.loc[len(habitlog_file)-1,"Date"]
-        last_date = datetime.datetime.strptime(last_date,'%d/%m/%Y')
-        
-        #get next day date
-        delta =  datetime.timedelta(days=1)
-        next_date = last_date + delta
-        next_date = datetime.datetime.strftime(next_date,'%d/%m/%Y') 
-    return next_date    
