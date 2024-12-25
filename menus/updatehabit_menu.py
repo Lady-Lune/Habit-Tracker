@@ -88,6 +88,7 @@ def next_logdate():
     return next_date    
 
 #-----------------------------------------------------------------------------------------------------------------------#
+
 def updateinput_handler(habit_list, current_date,cache):    
     
     #Choose Habit to Edit
@@ -96,20 +97,20 @@ def updateinput_handler(habit_list, current_date,cache):
             upd_input = input("USER: ")
 
             # keep choosing habits to log until user enter e or n
-            if (upd_input != 'e') and (upd_input != 'nd'):
+            if (upd_input != 'e') and (upd_input != 'E') and (upd_input != 'nd') and (upd_input != 'Nd') and (upd_input != 'ND') :
                 upd_input = int(upd_input)
                 upd_habit = habit_list[upd_input-1]
                 today_record = cache["TodayHabitLog"]
                 update_habitlog_dict(upd_habit, today_record) 
 
             # exit input window
-            elif upd_input == 'e':
+            elif (upd_input == 'e') or (upd_input == 'E'):
                 print("")
                 print("!! Habit logs you have input so far will be lost if program is closed without proceeding to next day !!")
                 return 
             
             # save records and proceed to next day
-            elif upd_input == 'nd':
+            elif (upd_input == 'nd')or (upd_input == 'Nd') or (upd_input == 'ND'):
                 print(f"Recording Habit Log for {current_date}....")
                 today_record = cache["TodayHabitLog"]
                 record_to_logfile(current_date,today_record)
@@ -145,6 +146,7 @@ def update_habitlog_dict(upd_habit, today_record):
     return today_record
 
 #-----------------------------------------------------------------------------------------------------------------------#
+
 #TODO: make this documentation Uses the current date (found through next_logdate()) a dict with habits as keys and 1/0 as value depending on did/miss status of the habit, and appends that to the HabitLog.csv file
 def record_to_logfile(current_date,today_record):
     try:

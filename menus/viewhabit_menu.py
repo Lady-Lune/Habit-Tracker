@@ -33,7 +33,7 @@ def viewhabitmenu():
             viewhabit_ind = input("Enter number to select corresponding habit: ")
 
             # Exit Viewhabit Menu
-            if viewhabit_ind == 'e':
+            if (viewhabit_ind == 'e') or (viewhabit_ind == 'E'):
                 return
             
             # When input is not e
@@ -51,7 +51,7 @@ def viewhabitmenu():
                 
         except Exception as e:
             if isinstance(e,ValueError):    
-            #handling common wrong input: alphabet characters other than 'e'
+            # handling common wrong input: alphabet characters other than 'e'
                 print("Please enter a valid number or 'e'")
             else:
                 print(f"Please enter a valid input. (Error: {e})")
@@ -63,7 +63,7 @@ def habitview(viewhabit_ind):
 # Retrieve habit to be viewed
     habitstats_file = pd.read_csv("HabitStats.csv", index_col="HabitName")
     habit_list = habitstats_file.index.to_list()
-    viewhabit = habit_list[viewhabit_ind-1] 
+    viewhabit = habit_list[viewhabit_ind-1]
 
 # Retrieve habit stats
     total_dids = habitstats_file.loc[viewhabit,"Total Dids"]
@@ -78,7 +78,7 @@ def habitview(viewhabit_ind):
     print(f"{' '*16}|{" You Did ":<16}{total_dids:<16}|{' '*16}")
     print(f"{' '*16}|{" You Missed":<16}{total_misses:<16}|{' '*16}")
     print(f"{' '*16}|{" Habit Streak":<16}{streak:<16}|{' '*16}")
-    print(f"{' '*16}{'*'*34}{' '*16}") 
+    print(f"{' '*16}{'*'*34}{' '*16}")
     print(f"{" e: exit":<22}{"p: previous":^22}{"n: next ":>22}")
     print('')
 
@@ -88,18 +88,18 @@ def habitview(viewhabit_ind):
             viewhabit_cmd = input("Enter command ")
             
             # Exit habit view
-            if viewhabit_cmd == 'e':
+            if (viewhabit_cmd == 'e') or (viewhabit_cmd == 'E'):
                 viewhabitmenu()
                 return
 
             # View next habit
-            elif viewhabit_cmd == 'n':
+            elif (viewhabit_cmd == 'n') or (viewhabit_cmd == 'N'):
                 viewhabit_ind += 1
                 habitview(viewhabit_ind)
                 return
             
             # View previous habit
-            elif viewhabit_cmd == 'p':
+            elif (viewhabit_cmd == 'p') or (viewhabit_cmd == 'P'):
                 viewhabit_ind -= 1
                 habitview(viewhabit_ind)
                 return

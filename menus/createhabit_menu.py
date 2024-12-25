@@ -117,7 +117,7 @@ def createnewhabit(habit_info, habit_name,cache):
     print('')
     print(f"AT [ {habit_info[habit_name]["Time"] } ] AFTER I [ {habit_info[habit_name]["After"]} ] I WILL [ {habit_name} ] BEFORE I [ {habit_info[habit_name]["Before"]} ]")
     print('')
-    print(f"{" e: exit without saving":<33}{"c: create new habit ":>33}")
+    print(f"{" e: exit without saving":<33}{"c: create habit ":>33}")
     print('-'*66)
     print('')
     
@@ -127,11 +127,11 @@ def createnewhabit(habit_info, habit_name,cache):
             createhabit_cmd = input("Enter Command: ")
 
             # exit habit creater
-            if createhabit_cmd == 'e':
+            if (createhabit_cmd == 'e') or (createhabit_cmd == 'E'):
                 return
             
             # add habit info to the files
-            elif createhabit_cmd == 'c':
+            elif (createhabit_cmd == 'c') or (createhabit_cmd == 'C'):
                 addhabit_to_habitfile(habit_name,cache)
                 addhabit_to_statfile(habit_name,cache)
                 addhabit_to_logfile(habit_name)

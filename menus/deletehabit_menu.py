@@ -29,7 +29,7 @@ def deletehabitmenu():
             delhabit_ind = input("Enter number to select corresponding habit: ")
 
             # exit delete habit menu
-            if delhabit_ind == 'e':
+            if (delhabit_ind == 'e') or (delhabit_ind == 'E'):
                 return
             else:
                 delhabit_ind = int(delhabit_ind)

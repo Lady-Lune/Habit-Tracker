@@ -33,7 +33,7 @@ def edithabitmenu():
             edithabit_ind = input("Enter number to select corresponding habit: ")
             
             # exit menu
-            if edithabit_ind == 'e':
+            if (edithabit_ind == 'e') or (edithabit_ind == 'E'):
                 return
             
             else:
@@ -79,7 +79,7 @@ def edit_habitinfo(edithabit_ind):
     while True:
         edit_infotype = input("Choose option to edit : ")
         try:
-            if edit_infotype == 'e':
+            if (edit_infotype == 'e') or (edit_infotype == 'E'):
 
                 # import habits file and get relevant info
                 # reads Habits.csv file, fills empty values with blank space and converts habit column to a list
@@ -97,7 +97,7 @@ def edit_habitinfo(edithabit_ind):
                 edithabitmenu()
                 return
             
-            elif edit_infotype == 'a':
+            elif (edit_infotype == 'a') or (edit_infotype == 'A'):
 
                 # import habits file and get relevant info
                 # reads Habits.csv file, fills empty values with blank space and converts habit column to a list
@@ -112,7 +112,7 @@ def edit_habitinfo(edithabit_ind):
                 # update file
                 edit_habitfile(edithabit, "Time", new_entry)
             
-            elif edit_infotype == 'af':
+            elif (edit_infotype == 'af') or (edit_infotype == 'AF') or (edit_infotype == 'Af'):
 
                 # import habits file and get relevant info
                 # reads Habits.csv file, fills empty values with blank space and converts habit column to a list
@@ -126,7 +126,7 @@ def edit_habitinfo(edithabit_ind):
                 # update file
                 edit_habitfile(edithabit, "After", new_entry)
             
-            elif edit_infotype == 'h':
+            elif (edit_infotype == 'h') or (edit_infotype == 'H'):
                 
                 # get input
                 new_habitname = input(f"Change {edithabit} to? ").lower()
@@ -136,7 +136,7 @@ def edit_habitinfo(edithabit_ind):
                 rename_habit(edithabit, new_habitname, filename="Habit.csv",indexcol="HabitName",df_axis="index")
                 rename_habit(edithabit, new_habitname, filename="HabitStats.csv",indexcol="HabitName",df_axis="index")
                 
-            elif edit_infotype == 'b':
+            elif (edit_infotype == 'b') or (edit_infotype == 'B'):
 
                 # import habits file and get relevant info
                 # reads Habits.csv file, fills empty values with blank space and converts habit column to a list
