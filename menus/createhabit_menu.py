@@ -10,10 +10,12 @@ import re
 
 def createhabitmenu(cache):
 
-    # List of current habits
+    # List of current habits and list of their times
     habit_file = pd.read_csv("Habit.csv")
     habit_list = habit_file["HabitName"].to_list()
+    habittime_list = habit_file["Time"].to_list()
 
+    
     # Display
     print('')
     print('*'*66)
@@ -32,6 +34,7 @@ def createhabitmenu(cache):
     print(f"|{'':14}|{"BEFORE I":>16}  {"sleep":<16}|{'':14}|")
     print(f"|{'|'+'_'*34+'|':^64}|")
     print(f"|{'':^64}|")
+    print(f"|{" e: exit":<64}|")
     print('*'*66)
     print('')
     
@@ -39,22 +42,40 @@ def createhabitmenu(cache):
     while True:
         try:
             habit_time = input(f"{"AT (in 24hr format)" :<16}  ")
+            
+            # Exit habit creater
+            if (habit_time == 'e') or (habit_time == 'E'):
+                return 
+            
+            # Convert input to standard time format
             habit_time = time_conv(habit_time)
-            break
+
+            # Check if another habit is already scheduled at this time        
+            if habit_time in habittime_list:
+                print("Another habit is already scheduled at this time")
+            else:
+                break
+            
         except Exception as e:
-            if isinstance(e,TypeError):
+            if isinstance(e,(TypeError,AttributeError)):
                 print("Input time in 24hr format ex: 15:30")
-            if isinstance(e,ValueError):
-                print("Make sure to input time in 24hr format like 09.30 or 18.30")
+            elif isinstance(e,ValueError):
+                print(f"Make sure to input time in 24hr format like 09.30 or 18.30. (Error: {e})")
             else: print(f"Error: {e}")
     
     # Get habit order: After
     after = input (f"{"AFTER I":<16}  ").lower()
+    # Exit habit creater
+    if (after == 'e') or (after == 'E'):
+        return
 
     # Get habit name
     while True:
         try:
             habit_name = input(f"{"I WANT TO":<16}  ").lower()
+            ##
+            if (habit_name == 'e') or (habit_name == 'E'):
+                return
             #Check if same habit exists
             if habit_name in habit_list:
                 raise Exception('Habit Already Exists')
@@ -66,6 +87,10 @@ def createhabitmenu(cache):
     
     # Get habit order: Before
     before = input(f"{"BEFORE I":<16}  ").lower()
+    
+    # Exit habit creater
+    if (before == 'e') or (before == 'E'):
+        return
     print('')
     print('*'*66)
     
@@ -92,12 +117,13 @@ def createhabitmenu(cache):
 def time_conv(habit_time):
 
     # Get hour and minuits from input
-    pattern = r"[^\d?\d?]"
-    result = re.split(pattern, habit_time)
+    pattern = r"^(\d{1,2})[.;](\d{2})$"
+    match = re.match(pattern, habit_time)
+    result = list(match.groups())
     result = map(int, result)
     H,M = result
 
-    # Check if time is in correcct fromat
+    # Check if time is in correct fromat
     if H > 23 or H< 0: 
         raise ValueError("Hour must be between 00-23")
     if M >60 or M < 0:
