@@ -5,10 +5,29 @@ import pandas as pd
 import re
 
 #=======================================================================================================================#
-#   3   Create New Habit
+#   3   Create New Habit 
 #=======================================================================================================================#
 
 def createhabitmenu(cache):
+
+    """
+    Allows the user to create a new habit and add it to the Habit.csv, HabitLog.csv and HabitStats.csv files.
+
+    The function first displays a menu with instructions for creating a habit and an example of how the habit should be structured.
+
+    The user is then prompted to input the time of the habit in 24 hour format and the habit name. The function checks if the time is already in use and if the habit already exists.
+
+    If the habit is new, the function adds the habit to the Habit.csv, HabitLog.csv and HabitStats.csv files and updates the cache.
+
+    Parameters
+    ----------
+    cache : dict
+        A dictionary empty or otherwise, to store the habit information.
+
+    Returns
+    -------
+    None
+    """
 
     # List of current habits and list of their times
     habit_file = pd.read_csv("Habit.csv")
@@ -73,10 +92,10 @@ def createhabitmenu(cache):
     while True:
         try:
             habit_name = input(f"{"I WANT TO":<16}  ").lower()
-            ##
+            # Exit habit creater
             if (habit_name == 'e') or (habit_name == 'E'):
                 return
-            #Check if same habit exists
+            # Check if same habit exists
             if habit_name in habit_list:
                 raise Exception('Habit Already Exists')
             if habit_name == '':
@@ -109,15 +128,37 @@ def createhabitmenu(cache):
         "Streak":0
     } }
 
-    # update cache
+    # Update cache
     cache.update(habit_info)
     createnewhabit(habit_info, habit_name,cache)
 
 #-----------------------------------------------------------------------------------------------------------------------#
+
 def time_conv(habit_time):
 
+    """
+    Converts a time string in the format "HH.MM" or with ":" or "," as seperator,to a standard time format "HH:MM"
+
+    Parameters
+    ----------
+    habit_time : str
+        A string representing the time in the format "HH.MM" or with ":" or "," as seperator
+
+    Returns
+    -------
+    str
+        A string representing the time in the format "HH:MM"
+
+    Raises
+    ------
+    ValueError
+        If the time string is not in the correct format or if the hour is not between 00-23 or if the minute is not between 00-60
+    AttributeError
+        If the input does not match the format "HH.MM" with ':','.'or ',' as seperator.
+    """
+    
     # Get hour and minuits from input
-    pattern = r"^(\d{1,2})[.;](\d{2})$"
+    pattern = r"^(\d{1,2})[.:,](\d{2})$"
     match = re.match(pattern, habit_time)
     result = list(match.groups())
     result = map(int, result)
@@ -137,6 +178,23 @@ def time_conv(habit_time):
 #-----------------------------------------------------------------------------------------------------------------------#
 
 def createnewhabit(habit_info, habit_name,cache):
+
+    """
+    Asks the user to confirm or cancel creating a new habit with the given info.
+
+    Parameters
+    ----------
+    habit_info : dict
+        A dictionary containing the info of the habit to be created
+    habit_name : str
+        A string representing the name of the habit to be created
+    cache : dict
+        A dictionary where the habit info is stored
+
+    Returns
+    -------
+    None
+    """
 
     # Display habit info
     print('-'*66)
@@ -174,6 +232,22 @@ def createnewhabit(habit_info, habit_name,cache):
 #-----------------------------------------------------------------------------------------------------------------------#
 
 def addhabit_to_habitfile(habit_name,cache):
+
+    """
+    Adds a new habit to Habit.csv with the given habit_name and habit info in cache
+
+    Parameters
+    ----------
+    habit_name : str
+        The name of the habit to be added
+    cache : dict
+        A dictionary where the habit info is stored
+
+    Returns
+    -------
+    None
+    """
+
     try:
         # dictionary to add to file
         newhabit_info = {"HabitName":habit_name , "Time": cache[habit_name]["Time"] ,"Before":cache[habit_name]["Before"] , "After":cache[habit_name]["After"]}
@@ -192,6 +266,22 @@ def addhabit_to_habitfile(habit_name,cache):
 #-----------------------------------------------------------------------------------------------------------------------#
 
 def addhabit_to_statfile(habit_name,cache):
+
+    """
+    Adds a new habit to HabitStats.csv with the given habit_name and habit statistics from the cache.
+
+    Parameters
+    ----------
+    habit_name : str
+        The name of the habit to be added.
+    cache : dict
+        A dictionary where the habit statistics are stored.
+
+    Returns
+    -------
+    None
+    """
+
     try:
         # dictionary to add to file
         newhabit_statinfo = {"HabitName":habit_name , "Created Date":cache[habit_name]["Created Date"] , "Total Dids":cache[habit_name]["Total Dids"] , "Total Misses":cache[habit_name]["Total Misses"] , "Streak":cache[habit_name]["Streak"]}
@@ -209,6 +299,25 @@ def addhabit_to_statfile(habit_name,cache):
 #-----------------------------------------------------------------------------------------------------------------------#
 
 def addhabit_to_logfile(habit_name):
-        habitlog_file = pd.read_csv('HabitLog.csv')
-        habitlog_file.insert(loc = len(habitlog_file.columns), column = habit_name, value = 0)
-        habitlog_file.to_csv("HabitLog.csv", index=False)
+
+    """
+    Adds a new habit column to HabitLog.csv with the given habit_name and a default value of 0 for the rows.
+
+    Parameters
+    ----------
+    habit_name : str
+        The name of the habit to be added.
+
+    Returns
+    -------
+    None
+
+    Raises
+    ------
+    FileNotFoundError
+        If the HabitLog.csv file is not found.
+    """
+
+    habitlog_file = pd.read_csv('HabitLog.csv')
+    habitlog_file.insert(loc = len(habitlog_file.columns), column = habit_name, value = 0)
+    habitlog_file.to_csv("HabitLog.csv", index=False)

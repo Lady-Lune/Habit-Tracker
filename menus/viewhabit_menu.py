@@ -8,6 +8,29 @@ import pandas as pd
 
 def viewhabitmenu():
 
+    """
+    Displays a menu to view an existing habit from the Habit.csv, HabitLog.csv, and HabitStats.csv files.
+
+    The function first displays a menu with instructions for viewing a habit and the list of existing habits.
+
+    The user is then prompted to input the number of the habit they want to view. The function checks if the input is valid.
+
+    If the input is valid, the function displays the habit statistics for the selected habit.
+
+    Parameters
+    ----------
+    None
+
+    Returns
+    -------
+    None
+
+    Raises
+    ------
+    FileNotFoundError
+        If the HabitStats.csv file is not found.
+    """
+
     # Import HabitStats.csv file as a DataFrame
     habitstats_file = pd.read_csv("HabitStats.csv", index_col="HabitName")
 
@@ -60,6 +83,23 @@ def viewhabitmenu():
 
 def habitview(viewhabit_ind):
     
+    """
+    Displays a habit and its stats (total dids, total misses and streak) from the HabitStats.csv file.
+
+    Parameters
+    ----------
+    viewhabit_ind : int
+        The index of the habit to be viewed in the list of habits.
+
+    Returns
+    -------
+    None
+
+    Raises
+    -------
+    FileNotFoundError
+        If the HabitStats.csv file is not found.
+    """
 # Retrieve habit to be viewed
     habitstats_file = pd.read_csv("HabitStats.csv", index_col="HabitName")
     habit_list = habitstats_file.index.to_list()

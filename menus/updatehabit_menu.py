@@ -11,6 +11,24 @@ import datetime
 # Log Habits as done or not done
 def updatehabitmenu(cache):   
 
+    """
+    Displays a menu to log the completion of each habit in the Habit.csv file.
+
+    Parameters
+    ----------
+    cache : dict
+        A dictionary empty or otherwise, to store the habit information.
+
+    Returns
+    -------
+    None
+
+    Raises
+    -------
+    FileNotFoundError 
+        If the Habit.csv or HabitLog.csv file is not found.
+    """
+
     # Get the current list of Habits in Habit.csv
     habit_file = pd.read_csv("Habit.csv")
     habit_list = habit_file["HabitName"].to_list()
@@ -67,8 +85,26 @@ def updatehabitmenu(cache):
 
 #-----------------------------------------------------------------------------------------------------------------------#
 
-#TODO: make this documentation Find Next day after the last day in the habit log file
 def next_logdate():
+
+    """
+    Finds the next day after the last day in the habit log file.
+
+    Parameters
+    ----------
+    None
+
+    Returns
+    -------
+    str
+        The next day after the last day in the habit log file in the format '%d/%m/%Y'.
+
+    Raises
+    -------
+    FileNotFoundError 
+        If the HabitLog.csv file is not found.
+    """
+
     habitlog_file = pd.read_csv("HabitLog.csv")
     
     
@@ -90,7 +126,27 @@ def next_logdate():
 #-----------------------------------------------------------------------------------------------------------------------#
 
 def updateinput_handler(habit_list, current_date,cache):    
+
+    """
+    Updates the habit log for the current day.
+
+    All habit logs for the day are set to zero by default when the program starts.
+
+    The logs are recorded temporarily in the cache dictionary.
     
+    The logs are recorded to file when the user proceeds to the next day. 
+   
+
+    Parameters
+    ----------
+    cache : dict
+        A dictionary containing habit information for the current session.
+
+    Returns
+    -------
+    None
+    """
+
     #Choose Habit to Edit
     while True:
         try:
@@ -128,8 +184,23 @@ def updateinput_handler(habit_list, current_date,cache):
 
 #-----------------------------------------------------------------------------------------------------------------------#
 
-#TODO: make this documentation Accepts Habit and today_record Dict as input - Alters the dictionary according to input
 def update_habitlog_dict(upd_habit, today_record):  
+
+    """
+    Accepts Habit and today_record Dict as input - Alters the dictionary according to input
+
+    Parameters
+    ----------
+    upd_habit : str
+        A string representing the name of the habit to be updated
+    today_record : dict
+        A dictionary where habit names are keys and values are the number of times the habit was done in the day
+
+    Returns
+    -------
+    None
+    """
+
     while True:
         try:
             ans = input(f"HABITTRACKER: Did you {upd_habit}? [y/n] ")
@@ -143,12 +214,27 @@ def update_habitlog_dict(upd_habit, today_record):
                 raise ValueError(ans, "is not a valid input, enter 'y' for yes and 'n' for no")
         except Exception as e:
             print(f"Error: {e}")
-    return today_record
+    return 
 
 #-----------------------------------------------------------------------------------------------------------------------#
 
-#TODO: make this documentation Uses the current date (found through next_logdate()) a dict with habits as keys and 1/0 as value depending on did/miss status of the habit, and appends that to the HabitLog.csv file
 def record_to_logfile(current_date,today_record):
+
+    """
+    Structure sthe parameters into a dictionary according to the format of the HabitLog.csv file and appends that to the HabitLog.csv file
+
+    Parameters
+    ----------
+    current_date : str
+        The current date in the format '%d/%m/%Y'
+    today_record : dict
+        A dictionary where habit names are keys and values are the number of times the habit was done in the day
+
+    Returns
+    -------
+    None
+    """
+
     try:
         # Get log in dictionary form
         dict_to_add = {'Date':current_date}
@@ -165,6 +251,25 @@ def record_to_logfile(current_date,today_record):
 #-----------------------------------------------------------------------------------------------------------------------#
 
 def update_habitstats(today_record):
+
+    """
+    Updates the habit statistics in HabitStats.csv with the given habit log for the day.
+
+    Parameters
+    ----------
+    today_record : dict
+        A dictionary where habit names are keys and values are the number of times the habit was done in the day
+
+    Returns
+    -------
+    None
+
+    Raises
+    -------
+    FileNotFoundError
+        If the HabitStats.csv file is not found.
+    """
+
     # get stats file
     habitstats_file = pd.read_csv("HabitStats.csv",index_col="HabitName", dtype={'Created Date':object, 'Total Dids':int, 'Total Misses':int, 'Streak':int})
     
