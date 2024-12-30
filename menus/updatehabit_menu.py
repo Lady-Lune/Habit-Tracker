@@ -8,7 +8,6 @@ import datetime
 #   2   Update Habit Log
 #=======================================================================================================================#
 
-# Log Habits as done or not done
 def updatehabitmenu(cache):   
 
     """
@@ -109,15 +108,15 @@ def next_logdate():
     
     
     if (len(habitlog_file))==0:
-        #date = today if HabitLog.csv is empty
+        # next_date = today, if HabitLog.csv is empty
         next_date = datetime.datetime.today().strftime('%d/%m/%Y')
    
     else:
-        #get last date
+        # Get last date
         last_date = habitlog_file.loc[len(habitlog_file)-1,"Date"]
         last_date = datetime.datetime.strptime(last_date,'%d/%m/%Y')
         
-        #get next day date
+        # Get next day date
         delta =  datetime.timedelta(days=1)
         next_date = last_date + delta
         next_date = datetime.datetime.strftime(next_date,'%d/%m/%Y') 
@@ -152,20 +151,20 @@ def updateinput_handler(habit_list, current_date,cache):
         try:
             upd_input = input("USER: ")
 
-            # keep choosing habits to log until user enter e or n
+            # Keep prompting to choose habits to log until user enters 'e' or 'n'
             if (upd_input != 'e') and (upd_input != 'E') and (upd_input != 'nd') and (upd_input != 'Nd') and (upd_input != 'ND') :
                 upd_input = int(upd_input)
                 upd_habit = habit_list[upd_input-1]
                 today_record = cache["TodayHabitLog"]
                 update_habitlog_dict(upd_habit, today_record) 
 
-            # exit input window
+            # Exit input window
             elif (upd_input == 'e') or (upd_input == 'E'):
                 print("")
                 print("!! Habit logs you have input so far will be lost if program is closed without proceeding to next day !!")
                 return 
             
-            # save records and proceed to next day
+            # Save records and proceed to next day
             elif (upd_input == 'nd')or (upd_input == 'Nd') or (upd_input == 'ND'):
                 print(f"Recording Habit Log for {current_date}....")
                 today_record = cache["TodayHabitLog"]
@@ -187,14 +186,14 @@ def updateinput_handler(habit_list, current_date,cache):
 def update_habitlog_dict(upd_habit, today_record):  
 
     """
-    Accepts Habit and today_record Dict as input - Alters the dictionary according to input
+    Accepts Habit and the dictionary with the current day's habit log as parameters and alters the dictionary according to input.
 
     Parameters
     ----------
     upd_habit : str
         A string representing the name of the habit to be updated
     today_record : dict
-        A dictionary where habit names are keys and values are the number of times the habit was done in the day
+        A dictionary where habit names are keys and values are the nuumber representing whether the habit was done or not done
 
     Returns
     -------
@@ -221,15 +220,14 @@ def update_habitlog_dict(upd_habit, today_record):
 def record_to_logfile(current_date,today_record):
 
     """
-    Structure sthe parameters into a dictionary according to the format of the HabitLog.csv file and appends that to the HabitLog.csv file
+    Structure the parameters into a dictionary according to the format of the HabitLog.csv file and appends that to the HabitLog.csv file
 
     Parameters
     ----------
     current_date : str
         The current date in the format '%d/%m/%Y'
     today_record : dict
-        A dictionary where habit names are keys and values are the number of times the habit was done in the day
-
+        A dictionary where habit names are keys and values are the number representing whether the habit was done or not done
     Returns
     -------
     None
@@ -258,7 +256,7 @@ def update_habitstats(today_record):
     Parameters
     ----------
     today_record : dict
-        A dictionary where habit names are keys and values are the number of times the habit was done in the day
+        A dictionary where habit names are keys and values are the number representing whether the habit was done or not done
 
     Returns
     -------
@@ -281,7 +279,7 @@ def update_habitstats(today_record):
             habit_misses = habitstats_file.loc[habit, "Total Misses"]
             habit_streak = habitstats_file.loc[habit, "Streak"]
             
-            # if habit not done --> edit misses and streak
+            # if habit is not done , edit misses and streak
             if today_record[habit] == 0:
                 habit_streak = 0 
                 habit_misses += 1
@@ -289,7 +287,7 @@ def update_habitstats(today_record):
                 habitstats_file.loc[habit, "Total Misses"] = habit_misses
                 habitstats_file.loc[habit, "Streak"] = habit_streak
 
-            # if habit done --> edit did-count and streak
+            # if habit is done , dit did-count and streak
             elif today_record[habit] == 1:
                 habit_streak += 1
                 habit_dids += 1

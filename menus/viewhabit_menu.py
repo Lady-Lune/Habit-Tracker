@@ -74,7 +74,7 @@ def viewhabitmenu():
                 
         except Exception as e:
             if isinstance(e,ValueError):    
-            # handling common wrong input: alphabet characters other than 'e'
+            # Handling common wrong input: alphabet characters other than 'e'
                 print("Please enter a valid number or 'e'")
             else:
                 print(f"Please enter a valid input. (Error: {e})")

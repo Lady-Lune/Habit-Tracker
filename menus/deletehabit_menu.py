@@ -7,6 +7,30 @@ import pandas as pd
 
 def deletehabitmenu():
     
+    """
+    Deletes a habit from the Habit.csv, HabitLog.csv and HabitStats.csv files.
+
+    The function first displays a menu with instructions for deleting a habit and the list of existing habits.
+
+    The user is then prompted to input the number of the habit they want to delete. The function checks if the input is valid.
+
+    If the input is valid, the function deletes the habit from Habit.csv, HabitLog.csv and HabitStats.csv files.
+
+    Parameters
+    ----------
+    None
+
+    Returns
+    -------
+    None
+
+    Raises
+    ------
+    FileNotFoundError
+        If the Habit.csv file is not found.
+    """
+
+
     # get list of habits from Habit.csv dataframe with space for missing values
     habit_file = pd.read_csv("Habit.csv", index_col="HabitName")
     habit_file = habit_file.fillna(value=' ')
@@ -68,6 +92,32 @@ def deletehabitmenu():
 #-----------------------------------------------------------------------------------------------------------------------#
 
 def delete_habit(csvfile,indexcol,delhabit,df_axis):
+
+    """
+    Delete a habit from all the csv files. The function takes in the name of the csv file, the column name of the index,
+    the name of the habit to be deleted and the axis of the dataframe to drop the habit from.
+
+    Parameters
+    ----------
+    csvfile : str
+        The name of the csv file to be edited.
+    indexcol : str
+        The name of the column to be used as the index.
+    delhabit : str
+        The name of the habit to be deleted.
+    df_axis : str
+        The axis of the dataframe to drop the habit from. It can either be "index" or "columns".
+
+    Returns
+    -------
+    None
+
+    Raises
+    ------    
+    FileNotFoundError   
+        If the specified file is not found.
+    """
+
     file_df = pd.read_csv(csvfile, index_col=indexcol)
     edited_df = file_df.drop(delhabit,axis=df_axis)
     edited_df.to_csv(csvfile) 
